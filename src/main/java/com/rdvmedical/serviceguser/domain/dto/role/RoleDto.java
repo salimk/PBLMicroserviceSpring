@@ -1,22 +1,22 @@
-package com.rdvmedical.serviceguser.domain.dto;
-
-import com.rdvmedical.serviceguser.domain.entity.Role;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+package com.rdvmedical.serviceguser.domain.dto.role;
 
 import java.io.Serializable;
 import java.util.Objects;
 
 /**
- * DTO for {@link Role}
+ * DTO for {@link com.rdvmedical.serviceguser.domain.entity.Role}
  */
 public class RoleDto implements Serializable {
-    @NotNull
-    @Size
+    private final Long id;
     private final String nom;
 
-    public RoleDto(String nom) {
+    public RoleDto(Long id, String nom) {
+        this.id = id;
         this.nom = nom;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public String getNom() {
@@ -28,17 +28,19 @@ public class RoleDto implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         RoleDto entity = (RoleDto) o;
-        return Objects.equals(this.nom, entity.nom);
+        return Objects.equals(this.id, entity.id) &&
+                Objects.equals(this.nom, entity.nom);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(nom);
+        return Objects.hash(id, nom);
     }
 
     @Override
     public String toString() {
         return getClass().getSimpleName() + "(" +
+                "id = " + id + ", " +
                 "nom = " + nom + ")";
     }
 }

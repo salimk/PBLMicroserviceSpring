@@ -11,7 +11,10 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -28,10 +31,14 @@ public class ServiceUserImpl implements IServiceUser {
     }
 
     @Override
-    public User createUser(User user) {
+    public User createUser(User user, Set<Long> roleIds) {
+
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new DataIntegrityViolationException("Email déjà utilisé: " + user.getEmail());
-        } else return userRepository.save(user);
+        } else {
+            attachRoles(user,roleIds);
+            return userRepository.save(user);
+        }
     }
 
     @Override
@@ -47,7 +54,7 @@ public class ServiceUserImpl implements IServiceUser {
     }
 
     @Override
-    public User updateUser(User user) {
+    public User updateUser(User user, Set<Long> roleIds) {
         User existing = userRepository.findById(user.getId())
                 .orElseThrow(() -> new EntityNotFoundException("User not found: " + user.getId()));
         existing.setEmail(user.getEmail());
@@ -55,6 +62,7 @@ public class ServiceUserImpl implements IServiceUser {
         existing.setNom(user.getNom());
         existing.setPrenom(user.getPrenom());
         existing.setTelephone(user.getTelephone());
+        attachRoles(existing,roleIds);
         return userRepository.save(existing);
 
     }
@@ -94,4 +102,15 @@ public class ServiceUserImpl implements IServiceUser {
         return userRepository.save(user);
     }
 
+    private void attachRoles(User user, Set<Long> roleIds) {
+        if (roleIds == null || roleIds.isEmpty()) {
+            user.setRoles(new HashSet<>());
+            return;
+        }
+        Set<Role> roles = roleIds.stream()
+                .map(rid -> roleRepository.findById(rid)
+                        .orElseThrow(() -> new EntityNotFoundException("Role not found: " + rid)))
+                .collect(Collectors.toSet());
+        user.setRoles(roles);
+    }
 }
