@@ -27,5 +27,6 @@ public interface UserMapper {
     Set<UserReadDto> toReadDtoSet(Set<User> users);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    User partialUpdate(UserReadDto userReadDto, @MappingTarget User user);
+    @Mapping(target = "roles", ignore = true)
+    User partialUpdate(UserCreateUpdateDto dto, @MappingTarget User user);
 }

@@ -26,5 +26,6 @@ public interface DocteurMapper {
     Set<DocteurReadDto> toReadDtoSet(Set<Docteur> docteurs);
 
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    Docteur partialUpdate(DocteurReadDto docteurReadDto, @MappingTarget Docteur docteur);
+    @Mapping(target = "roles", ignore = true)
+    Docteur partialUpdate(DocteurCreateUpdateDto dto, @MappingTarget Docteur docteur);
 }
