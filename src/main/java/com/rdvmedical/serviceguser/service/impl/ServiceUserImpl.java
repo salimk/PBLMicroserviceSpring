@@ -77,8 +77,7 @@ public class ServiceUserImpl implements IServiceUser {
     @Transactional(readOnly = true)
     @Override
     public User findByEmail(String email) {
-         User user = userRepository.findByEmail(email)
-                 .orElseThrow(() -> new EntityNotFoundException("User not found: " + email));
+         User user = userRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("User not found: " + email));
          return user;
     }
 
